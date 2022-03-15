@@ -14,7 +14,9 @@
 #include "../domains/tile_puzzle/tile_puzzle_transitions.h"
 #include "../domains/tile_puzzle/tile_manhattan_distance.h"
 #include "../generic_defs/single_goal_test.h"
-#include "../algorithms/best_first_search/a_star.h"
+// #include "../algorithms/best_first_search/awa_star.h"
+#include "../algorithms/best_first_search/weighted_a_star.h"
+#include "../algorithms/best_first_search/e_weighted_a_star.h"
 #include "../generic_defs/permutation_hash_function.h"
 #include "../utils/combinatorics.h"
 
@@ -29,63 +31,65 @@ int main(int argc, char **argv)
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
-    AStar<TilePuzzleState, BlankSlide> a_star;
-
-    TilePuzzleTransitions tile_ops(3, 4, TileCostType::inverse);
-    a_star.setTransitionSystem(&tile_ops);
-
+    TilePuzzleTransitions tile_ops(3, 4, TileCostType::unit);
     TilePuzzleState goal_state(3, 4);
-
     SingleGoalTest<TilePuzzleState> goal_test(goal_state);
-    a_star.setGoalTest(&goal_test);
-
     PermutationHashFunction<TilePuzzleState> tile_hash;
-    a_star.setHashFunction(&tile_hash);
-
     TileManhattanDistance manhattan(goal_state, tile_ops);
-    a_star.setHeuristic(&manhattan);
 
-    vector<BlankSlide> solution;
+    // weighted A*
+    WAStar<TilePuzzleState, BlankSlide> wa_star(10);
+    wa_star.setTransitionSystem(&tile_ops);
+    wa_star.setGoalTest(&goal_test);
+    wa_star.setHashFunction(&tile_hash);
+    wa_star.setHeuristic(&manhattan);
+
+    // Epsilon weighted A*
+    EpsilonWAStar<TilePuzzleState, BlankSlide> e_wa_star(10, 0.1);
+    e_wa_star.setTransitionSystem(&tile_ops);
+    e_wa_star.setGoalTest(&goal_test);
+    e_wa_star.setHashFunction(&tile_hash);
+    e_wa_star.setHeuristic(&manhattan);
+
 
     vector<vector<unsigned> > starts;
-    
-    vector<uint64_t> expansions;
-    vector<uint64_t> lengths;
+
+    vector<BlankSlide> wa_solution;
+    vector<uint64_t> wa_expansions;
+    vector<uint64_t> wa_lengths;
+
+    vector<BlankSlide> e_wa_solution;
+    vector<uint64_t> e_wa_expansions;
+    vector<uint64_t> e_wa_lengths;
 
     read_in_permutations("../src/domains/tile_puzzle/tile_files/3x4_puzzle.probs", starts);
 
-
     for(unsigned i = 0; i < starts.size(); i++) {
+
         TilePuzzleState start_state(starts[i], 3, 4);
+        // a_star.getPlan(start_state, a_solution);
+        // a_lengths.push_back(a_star.getLastPlan().size());
+        // a_expansions.push_back(a_star.getGoalTestCount());
 
-        // auto t1 = high_resolution_clock::now();
-        a_star.getPlan(start_state, solution);
-        // auto t2 = high_resolution_clock::now();
-        // duration<double, std::milli> ms_double = t2 - t1;
+        wa_star.getPlan(start_state, wa_solution);
+        wa_lengths.push_back(wa_star.getLastPlan().size());
+        wa_expansions.push_back(wa_star.getGoalTestCount());
 
-        // prints stats (using goal test count as measure of number of expansions)
-        // cout << a_star.getLastPlanCost()
-        //         << endl;
-
-        lengths.push_back(a_star.getLastPlan().size());
-        expansions.push_back(a_star.getGoalTestCount());
+        e_wa_star.getPlan(start_state, e_wa_solution);
+        e_wa_lengths.push_back(e_wa_star.getLastPlan().size());
+        e_wa_expansions.push_back(e_wa_star.getGoalTestCount());
 
     }
 
-    double avg = 0;
-    printf("Expansions: \n");
-    for (unsigned int i=0; i<expansions.size(); i++){
-        printf("%" PRIu64 "\n", expansions[i]);
-        avg += expansions[i];
-    }
-    printf("average cost: %f\n", avg/expansions.size());
+    // for (unsigned i = 0; i<wa_lengths.size(); i++){
+    //     printf("Lenghts.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n", a_lengths[i], wa_lengths[i], e_wa_lengths[i]);
+    //     printf("Expansions.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n\n", a_expansions[i], wa_expansions[i], e_wa_expansions[i]);
+    // }
 
-    sort(expansions.begin(), expansions.end(), greater<uint64_t>());
-    printf("median cost: %" PRIu64 "\n", expansions[50]);
-
-    printf("\nLengths:\n");
-    for (unsigned int i=0; i<lengths.size(); i++){
-        printf("%" PRIu64 "\n", lengths[i]);
+    for (unsigned i = 0; i<wa_lengths.size(); i++){
+        printf("Lenghts.... Epsilon: %ld\n", wa_lengths[i]);
+        printf("Expansions.... Epsilon: %ld\n\n", wa_lengths[i]);
     }
+
     return 0;
 }

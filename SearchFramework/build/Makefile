@@ -22,6 +22,8 @@ HEADERS = \
 	algorithms/best_first_search/node_table.h \
 	algorithms/best_first_search/open_closed_list.h \
 	algorithms/best_first_search/a_star.h \
+	algorithms/best_first_search/weighted_a_star.h \
+	algorithms/best_first_search/e_weighted_a_star.h \
 	utils/string_utils.h \
 	utils/combinatorics.h
 

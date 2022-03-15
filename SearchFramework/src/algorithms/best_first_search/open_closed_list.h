@@ -434,8 +434,8 @@ template<class state_t, class action_t>
 inline bool OpenClosedList<state_t, action_t>::nodeNoWorse(const BFSNode<state_t, action_t>& node_1,
         const BFSNode<state_t, action_t>& node_2) const
 {
-    // return defaultNodeNoWorse(node_1, node_2);
-    return highGNodeNoWorse(node_1, node_2);
+    return defaultNodeNoWorse(node_1, node_2);
+    // return highGNodeNoWorse(node_1, node_2);
     // return lowGNodeNoWorse(node_1, node_2);
 }
 
@@ -487,14 +487,15 @@ NodeID OpenClosedList<state_t, action_t>::getRandomNodeAndClose()
 {
     assert(!open_list_heap.empty());
 
-    NodeID best_id = open_list_heap[0];
+    int random_choice = rand() % open_list_heap.size();
+    NodeID best_id = open_list_heap[random_choice];
     node_table[best_id].in_open = false;
 
-    open_list_heap[0] = open_list_heap.back();
-    node_table.getNode(open_list_heap[0]).location = 0;
+    open_list_heap[random_choice] = open_list_heap.back();
+    node_table.getNode(open_list_heap[random_choice]).location = 0;
     open_list_heap.pop_back();
 
-    heapifyDown(0);
+    heapifyDown(random_choice);
 
     // printf("best g: %f, best h: %f, eval: %f\n", getNode(best_id).g_cost, getNode(best_id).h_value, getNode(best_id).eval );
     return best_id;
