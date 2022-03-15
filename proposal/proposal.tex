@@ -1,0 +1,44 @@
+
+\documentclass{llncs} 
+
+\title{CP8207 - Project Proposal}
+\author{Dawson Brown (500780579)\\dawson.brown@ryerson.ca}
+\institute{Ryerson University}
+
+\date{}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+
+\section{Project Description}
+I aim to investigate combining Anytime Weighted A* (AWA*) \cite{hansen2007anytime} with exploration methods. Relying on a reference implementation of A*, I will implement AWA* and two exploration methods. I will then evaluate the resulting algorithms with two experiments using two different heuristics. The results of employing exploration methods in AWA* will be compared to standard AWA* to see if exploration can improve AWA* in certain contexts.
+
+For starters, and most simply, I would like to combine the random exploration from $\epsilon$-GBFS \cite{valenzano2014comparison} with AWA* to get $\epsilon$-AWA*. What this would mean in AWA* is that during the continued execution of WA* there is always a probability $\epsilon$ that the next node selected for expansion is chosen randomly from the open list. 
+
+I would then like to slightly extend the combination of type-based exploration with WA* \cite{cohen2021type} to get Type-AWA* in which type-based sampling is used over the course of the Anytime WA* execution. 
+
+In the end I will have implemented 3 algorithms: AWA*, $\epsilon$-AWA*, and Type-AWA*, all based upon the same A* reference implementation.
+
+\subsection{Experiments}
+In order to evaluate $\epsilon$-AWA* and Type-AWA* I will be running two experiments on multiple instances of the sliding tile puzzle and inverse sliding tile puzzle. The first will investigate the effect of the two sampling techniques when using the Manhattan Distance as a heuristic (in the case of the inverse tile puzzle the weighted Manhattan Distance will be used). AWA*, using the same heuristics, will be the benchmark, and the results of running $\epsilon$-AWA* and Type-AWA* on the tile puzzles will be compared to running AWA* on the same problem set. 
+
+The next experiment will involve using a worse heuristic on the same two problem sets to see if random and type-based sampling will improve AWA* in cases where plateaus and local minima are more likely. For this, I will degrade the heuristic and it will simply be the number of tiles that are out of place. Again the results of running $\epsilon$-AWA* and Type-AWA* with this new heuristic will be compared to running AWA* with the same heuristic on the same problem sets.
+
+\subsection{Evaluation}
+The three algorithms, $\epsilon$-AWA*, Type-AWA*, and AWA* will be compared in three ways. Firstly, I will compare the number of nodes that get expanded by each before the optimal solution is found. Secondly, I will chart the average quality of the current best solution found by each algorithm at fixed time steps as a way to compare the rate of convergence to the optimal solution. And lastly, I will look at the average time between found solutions for each algorithm. All these metrics are taken straight from the literature \cite{thayer2012better}\cite{hansen2007anytime}.
+
+
+\section{Resources}
+I intend to base the implementation of my algorithms on a reference implementation of A*. I will either use the SearchFramework from class since it comes with the sliding tile puzzle, or I will use a Python implementation I found on Github that also comes with an implementation of the sliding tile puzzle \cite{pip-astar}. Using Python will reduce the amount of work it takes to implement the other algorithms. 
+
+With this reference implementation, I will follow the original Anytime Heuristic Search paper to create an implementation of AWA* \cite{hansen2007anytime}. Once I have AWA* implemented, I will implement $\epsilon$-AWA*, referring to $\epsilon$-GBFS for relevant implementation details \cite{valenzano2016completeness}\cite{valenzano2014comparison}. Following that, I will implement Type-AWA*, referring to Type-WA* for relevant implementation details \cite{cohen2021type}. In order to evaluate the algorithms I'm following the experiments conducted in Anytime Heuristic Search \cite{hansen2007anytime} and Better Parameter-free Anytime Search by Minimizing Time Between Solutions \cite{thayer2012better}.
+
+\section{Schedule}
+By the last week of March I intend to have all algorithms implemented. In the last week of March I will begin the final report by writing the algorithm descriptions and pseudocode implementations. In early April I will create my progress presentation and then conduct my experiments. Following the presentation I will finish the final report by including the experiment descriptions and results.
+
+
+\newpage
+\bibliography{ref}
+\bibliographystyle{splncs04}
+
+\end{document}
