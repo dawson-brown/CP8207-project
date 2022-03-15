@@ -17,19 +17,16 @@
 
 
 template<class state_t, class action_t>
-class AWAStar : public BestFirstSearch<state_t, action_t> 
+class AWAStar : public WAStar<state_t, action_t>
 {
 public:
     AWAStar(double weight) : WAStar<state_t, action_t>(weight) {};
-    AWAStar(double weight, double epsilon) : EpsilonWAStar<state_t, action_t>(weight, epsilon) {
-        mid_search = false;
-    };
+    // AWAStar(double weight, double epsilon) : EpsilonWAStar<state_t, action_t>(weight, epsilon) {};
     virtual ~AWAStar();   
-    virtual SearchTermType searchForPlan(const state_t &init_state);
-    SearchTermType getPlan(const state_t &init_state, std::vector<action_t> &sol_plan); 
 
-private:
-    bool mid_search;
+protected:
+    virtual SearchTermType searchForPlan(const state_t &init_state);
+    std::vector<unsigned> incumbent_lengths;
 
 };
 
@@ -41,29 +38,31 @@ inline AWAStar<state_t, action_t>::~AWAStar()
 template<class state_t, class action_t>
 SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_state)
 {
-    BfsExpansionResult exp_result = BfsExpansionResult::no_solution;
 
-    if (mid_search == false) {
+    BfsExpansionResult exp_result;
 
-        heur_func->prepareToCompute();
-        double init_h = heur_func->getHValue(init_state);
+    this->heur_func->prepareToCompute();
+    double init_h = this->heur_func->getHValue(init_state);
 
-        incrementHCompCount();
+    this->pubIncrementHCompCount();
 
-        double init_eval = nodeEval(init_state, 0.0, init_h);
+    double init_eval = this->nodeEval(init_state, 0.0, init_h);
 
-        open_closed_list.addInitialNodeToOpen(init_state, op_system->getDummyAction(), hash_func->getStateHash(init_state),
-                init_h, init_eval);
-    } else {
-        // TODO: the meat of AWA* i guess? 
-    }
+    this->open_closed_list.addInitialNodeToOpen(init_state, this->getTransitionSystem()->getDummyAction(), this->hash_func->getStateHash(init_state),
+            init_h, init_eval);
 
-    while(exp_result == BfsExpansionResult::no_solution)
-        exp_result = nodeExpansion();
+    while( true ){
+        exp_result = this->nodeExpansion();
 
+        if (exp_result == BfsExpansionResult::empty_open){
+            break;
+        }
 
-    if (mid_search == false){
-        mid_search = true;
+        if (exp_result == BfsExpansionResult::goal_found) {
+            incumbent_lengths.push_back(this->getLastPlanCost());
+        } else if (exp_result == BfsExpansionResult::res_limit){
+            break;
+        }
     }
 
 
@@ -73,32 +72,32 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
 
 }
 
-template<class state_t, class action_t>
-SearchTermType AWAStar<state_t, action_t>::getPlan(const state_t& init_state, std::vector<action_t>& sol_plan)
-{
+// template<class state_t, class action_t>
+// SearchTermType AWAStar<state_t, action_t>::getPlan(const state_t& init_state, std::vector<action_t>& sol_plan)
+// {
 
-    resetEngine();
+//     resetEngine();
 
-    if(alg_status == SearchStatus::not_ready)
-        return SearchTermType::engine_not_ready;
+//     if(alg_status == SearchStatus::not_ready)
+//         return SearchTermType::engine_not_ready;
 
-    alg_status = SearchStatus::active;
+//     alg_status = SearchStatus::active;
 
-    while(open_closed_list.isOpenEmpty()) {
-        SearchTermType term = searchForPlan(init_state);
-    }
+//     while(open_closed_list.isOpenEmpty()) {
+//         SearchTermType term = searchForPlan(init_state);
+//     }
 
-    alg_status = SearchStatus::terminated;
+//     alg_status = SearchStatus::terminated;
 
-    sol_plan.clear();
-    if(incumbent_plan.size() > 0) {
-        for(unsigned i = 0; i < incumbent_plan.size(); i++) {
-            sol_plan.push_back(incumbent_plan[i]);
-        }
-    }
+//     sol_plan.clear();
+//     if(incumbent_plan.size() > 0) {
+//         for(unsigned i = 0; i < incumbent_plan.size(); i++) {
+//             sol_plan.push_back(incumbent_plan[i]);
+//         }
+//     }
 
-    return term;
-}
+//     return term;
+// }
 
 
 #endif /* A_STAR_H_ */

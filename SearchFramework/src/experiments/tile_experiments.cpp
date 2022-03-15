@@ -14,7 +14,7 @@
 #include "../domains/tile_puzzle/tile_puzzle_transitions.h"
 #include "../domains/tile_puzzle/tile_manhattan_distance.h"
 #include "../generic_defs/single_goal_test.h"
-// #include "../algorithms/best_first_search/awa_star.h"
+#include "../algorithms/best_first_search/awa_star.h"
 #include "../algorithms/best_first_search/weighted_a_star.h"
 #include "../algorithms/best_first_search/e_weighted_a_star.h"
 #include "../generic_defs/permutation_hash_function.h"
@@ -37,26 +37,26 @@ int main(int argc, char **argv)
     PermutationHashFunction<TilePuzzleState> tile_hash;
     TileManhattanDistance manhattan(goal_state, tile_ops);
 
-    // weighted A*
-    WAStar<TilePuzzleState, BlankSlide> wa_star(10);
-    wa_star.setTransitionSystem(&tile_ops);
-    wa_star.setGoalTest(&goal_test);
-    wa_star.setHashFunction(&tile_hash);
-    wa_star.setHeuristic(&manhattan);
+    // Anytime weighted A*
+    AWAStar<TilePuzzleState, BlankSlide> awa_star(10);
+    awa_star.setTransitionSystem(&tile_ops);
+    awa_star.setGoalTest(&goal_test);
+    awa_star.setHashFunction(&tile_hash);
+    awa_star.setHeuristic(&manhattan);
 
     // Epsilon weighted A*
-    EpsilonWAStar<TilePuzzleState, BlankSlide> e_wa_star(10, 0.1);
-    e_wa_star.setTransitionSystem(&tile_ops);
-    e_wa_star.setGoalTest(&goal_test);
-    e_wa_star.setHashFunction(&tile_hash);
-    e_wa_star.setHeuristic(&manhattan);
+    // EpsilonWAStar<TilePuzzleState, BlankSlide> e_wa_star(10, 0.1);
+    // e_wa_star.setTransitionSystem(&tile_ops);
+    // e_wa_star.setGoalTest(&goal_test);
+    // e_wa_star.setHashFunction(&tile_hash);
+    // e_wa_star.setHeuristic(&manhattan);
 
 
     vector<vector<unsigned> > starts;
 
-    vector<BlankSlide> wa_solution;
-    vector<uint64_t> wa_expansions;
-    vector<uint64_t> wa_lengths;
+    vector<BlankSlide> awa_solution;
+    vector<uint64_t> awa_expansions;
+    vector<uint64_t> awa_lengths;
 
     vector<BlankSlide> e_wa_solution;
     vector<uint64_t> e_wa_expansions;
@@ -67,17 +67,19 @@ int main(int argc, char **argv)
     for(unsigned i = 0; i < starts.size(); i++) {
 
         TilePuzzleState start_state(starts[i], 3, 4);
-        // a_star.getPlan(start_state, a_solution);
-        // a_lengths.push_back(a_star.getLastPlan().size());
-        // a_expansions.push_back(a_star.getGoalTestCount());
+        awa_star.getPlan(start_state, awa_solution);
+        awa_lengths.push_back(awa_star.getLastPlan().size());
+        awa_expansions.push_back(awa_star.getGoalTestCount());
 
-        wa_star.getPlan(start_state, wa_solution);
-        wa_lengths.push_back(wa_star.getLastPlan().size());
-        wa_expansions.push_back(wa_star.getGoalTestCount());
+        break;
 
-        e_wa_star.getPlan(start_state, e_wa_solution);
-        e_wa_lengths.push_back(e_wa_star.getLastPlan().size());
-        e_wa_expansions.push_back(e_wa_star.getGoalTestCount());
+        // wa_star.getPlan(start_state, wa_solution);
+        // wa_lengths.push_back(wa_star.getLastPlan().size());
+        // wa_expansions.push_back(wa_star.getGoalTestCount());
+
+        // e_wa_star.getPlan(start_state, e_wa_solution);
+        // e_wa_lengths.push_back(e_wa_star.getLastPlan().size());
+        // e_wa_expansions.push_back(e_wa_star.getGoalTestCount());
 
     }
 
@@ -86,10 +88,10 @@ int main(int argc, char **argv)
     //     printf("Expansions.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n\n", a_expansions[i], wa_expansions[i], e_wa_expansions[i]);
     // }
 
-    for (unsigned i = 0; i<wa_lengths.size(); i++){
-        printf("Lenghts.... Epsilon: %ld\n", wa_lengths[i]);
-        printf("Expansions.... Epsilon: %ld\n\n", wa_lengths[i]);
-    }
+    // for (unsigned i = 0; i<awa_lengths.size(); i++){
+    //     printf("Lenghts.... AWA: %ld\n", awa_lengths[i]);
+    //     printf("Expansions.... AWA: %ld\n\n", awa_lengths[i]);
+    // }
 
     return 0;
 }

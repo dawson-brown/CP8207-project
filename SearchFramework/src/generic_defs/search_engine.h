@@ -90,6 +90,8 @@ public:
      */
     void setTransitionSystem(const TransitionSystem<state_t, action_t> *o);
 
+    const TransitionSystem<state_t, action_t> * getTransitionSystem();
+
     /**
      * Gets the current status of the search engine.
      *
@@ -256,6 +258,8 @@ public:
      */
     virtual bool isConfigured() const;
 
+    virtual void pubIncrementHCompCount();
+
 protected:
 
     /**
@@ -345,6 +349,13 @@ void SearchEngine<state_t, action_t>::setTransitionSystem(const TransitionSystem
     op_system = o;
 
     resetEngine();
+}
+
+template<class state_t, class action_t>
+const TransitionSystem<state_t, action_t>* SearchEngine<state_t, action_t>::getTransitionSystem()
+{
+    return op_system;
+
 }
 
 template<class state_t, class action_t>
@@ -542,6 +553,13 @@ template<class state_t, class action_t>
 void SearchEngine<state_t, action_t>::incrementSuccFuccCalls()
 {
     succ_func_count++;
+}
+
+
+template<class state_t, class action_t>
+void SearchEngine<state_t, action_t>::pubIncrementHCompCount()
+{
+    incrementHCompCount();
 }
 
 template<class state_t, class action_t>
