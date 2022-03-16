@@ -367,6 +367,7 @@ inline SearchStatus SearchEngine<state_t, action_t>::getStatus() const
 template<class state_t, class action_t>
 SearchTermType SearchEngine<state_t, action_t>::getPlan(const state_t& init_state, std::vector<action_t>& sol_plan)
 {
+    // printf("getPlan\n");
     resetEngine();
 
     if(alg_status == SearchStatus::not_ready)

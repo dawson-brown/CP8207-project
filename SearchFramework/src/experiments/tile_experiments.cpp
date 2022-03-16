@@ -37,6 +37,13 @@ int main(int argc, char **argv)
     PermutationHashFunction<TilePuzzleState> tile_hash;
     TileManhattanDistance manhattan(goal_state, tile_ops);
 
+    // A*
+    AStar<TilePuzzleState, BlankSlide> a_star;
+    a_star.setTransitionSystem(&tile_ops);
+    a_star.setGoalTest(&goal_test);
+    a_star.setHashFunction(&tile_hash);
+    a_star.setHeuristic(&manhattan);
+
     // Anytime weighted A*
     AWAStar<TilePuzzleState, BlankSlide> awa_star(10);
     awa_star.setTransitionSystem(&tile_ops);
@@ -56,22 +63,23 @@ int main(int argc, char **argv)
 
     vector<BlankSlide> awa_solution;
     vector<uint64_t> awa_expansions;
-    vector<uint64_t> awa_lengths;
+    vector<vector<double>> awa_costs;
 
-    vector<BlankSlide> e_wa_solution;
+    vector<BlankSlide> a_solution;
     vector<uint64_t> e_wa_expansions;
-    vector<uint64_t> e_wa_lengths;
+    vector<double> a_costs;
 
     read_in_permutations("../src/domains/tile_puzzle/tile_files/3x4_puzzle.probs", starts);
 
-    for(unsigned i = 0; i < starts.size(); i++) {
+    for(unsigned i = 0; i < 5; i++) {
 
         TilePuzzleState start_state(starts[i], 3, 4);
         awa_star.getPlan(start_state, awa_solution);
-        awa_lengths.push_back(awa_star.getLastPlan().size());
-        awa_expansions.push_back(awa_star.getGoalTestCount());
+        awa_costs.push_back(awa_star.getSolutionCosts());
 
-        break;
+        a_star.getPlan(start_state, a_solution);
+        a_costs.push_back(a_star.getLastPlanCost());
+        // awa_expansions.push_back(awa_star.getGoalTestCount());
 
         // wa_star.getPlan(start_state, wa_solution);
         // wa_lengths.push_back(wa_star.getLastPlan().size());
@@ -88,10 +96,12 @@ int main(int argc, char **argv)
     //     printf("Expansions.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n\n", a_expansions[i], wa_expansions[i], e_wa_expansions[i]);
     // }
 
-    // for (unsigned i = 0; i<awa_lengths.size(); i++){
-    //     printf("Lenghts.... AWA: %ld\n", awa_lengths[i]);
-    //     printf("Expansions.... AWA: %ld\n\n", awa_lengths[i]);
-    // }
+    for (unsigned i = 0; i<5; i++){
+        for (unsigned j = 0; j<awa_costs[i].size(); j++){
+            printf("Costs.... AWA: %f\n", awa_costs[i][j]);
+        }
+        printf("Cost -- A*: %f\n\n", a_costs[i]);
+    }
 
     return 0;
 }

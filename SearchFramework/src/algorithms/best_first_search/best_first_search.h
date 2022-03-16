@@ -121,6 +121,13 @@ protected:
     virtual BfsExpansionResult nodeExpansion();
 
     /**
+     * Checks whether or not the current node should be generated or not
+     *
+     * @return bool
+     */
+    virtual bool skipNodeForGeneration(state_t child_state, double child_g);
+
+    /**
      * Extracts the path that ends at the node for the given id and stores it as the incumbent plan.
      *
      * @param path_end_id The node at the end of the path.
@@ -196,9 +203,18 @@ NodeID BestFirstSearch<state_t, action_t>::getNodeForExpansion()
     return open_closed_list.getBestNodeAndClose();
 }
 
+
+template<class state_t, class action_t>
+bool BestFirstSearch<state_t, action_t>::skipNodeForGeneration(state_t child_state, double child_g)
+{
+    return false;
+}
+
+
 template<class state_t, class action_t>
 BfsExpansionResult BestFirstSearch<state_t, action_t>::nodeExpansion()
 {
+    // printf("nodeExpansion 1\n");
     if(open_closed_list.isOpenEmpty())
         return BfsExpansionResult::empty_open;
 
@@ -230,12 +246,19 @@ BfsExpansionResult BestFirstSearch<state_t, action_t>::nodeExpansion()
     op_system->getActions(to_expand_node.state, app_actions);
     increaseActionGenCount(app_actions.size());
 
+    // printf("nodeExpansion 2\n");
+
     for(unsigned i = 0; i < app_actions.size(); i++) {
 
         double edge_cost = op_system->getActionCost(to_expand_node.state, app_actions[i]);
         double child_g = parent_g + edge_cost;
 
         state_t child_state = to_expand_node.state;
+
+        // printf("nodeExpansion 3\n");
+        if (skipNodeForGeneration(child_state, child_g))
+            continue;
+        // printf("nodeExpansion 4\n");
         op_system->applyAction(child_state, app_actions[i]);
         incrementStateGenCount();
 
