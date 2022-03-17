@@ -39,13 +39,6 @@ protected:
     virtual double nodeEvalAdmissible(const state_t &state, double g_cost, double h_cost);
 
     /**
-     * Expands a single node and returns the result of the expansion (regarding if a solution as found or not).
-     *
-     * @return The result of the node expansion.
-     */
-    // virtual BfsExpansionResult nodeExpansion();
-
-    /**
      * Checks whether or not the current node should be generated or not
      *
      * @return bool
@@ -72,90 +65,6 @@ void AWAStar<state_t, action_t>::resetEngine()
     BestFirstSearch<state_t, action_t>::resetEngine();
 }
 
-// template<class state_t, class action_t>
-// BfsExpansionResult AWAStar<state_t, action_t>::nodeExpansion()
-// {
-//     if(this->open_closed_list.isOpenEmpty())
-//         return BfsExpansionResult::empty_open;
-
-//     NodeID to_expand_id = this->getNodeForExpansion();
-
-//     BFSNode<state_t, action_t> to_expand_node = this->open_closed_list.getNode(to_expand_id);
-//     //std::cout << "Expanding " << to_expand_id << " - " << to_expand_node.state << "," << to_expand_node.gen_action << std::endl;
-
-//     if(this->hitGoalTestLimit())
-//         return BfsExpansionResult::res_limit;
-
-//     this->incrementGoalTestCount();
-//     if(!to_expand_node.reopened)
-//         this->unique_goal_tests++; // change this to a function
-
-//     if(this->goal_test->isGoal(to_expand_node.state)) { // checks for goal
-//         this->extractSolutionPath(to_expand_id);
-//         return BfsExpansionResult::goal_found;
-//     }
-
-//     double parent_g = to_expand_node.g_cost;
-
-//     if(this->hitSuccFuncLimit())
-//         return BfsExpansionResult::res_limit;
-
-//     this->incrementSuccFuccCalls();
-
-//     this->app_actions.clear();
-//     this->getTransitionSystem()->getActions(to_expand_node.state, this->app_actions);
-//     this->increaseActionGenCount(this->app_actions.size());
-
-//     for(unsigned i = 0; i < this->app_actions.size(); i++) {
-
-//         double edge_cost = this->getTransitionSystem()->getActionCost(to_expand_node.state, this->app_actions[i]);
-//         double child_g = parent_g + edge_cost;
-
-//         state_t child_state = to_expand_node.state;
-//         this->pubIncrementHCompCount();
-//         this->heur_func->prepareToCompute();
-//         double child_h = this->heur_func->getHValue(child_state);
-//         double child_eval_admissible = nodeEvalAdmissible(child_state, child_g, child_h);
-
-//         if (child_eval_admissible >= incumbent_g_costs[incumbent_g_costs.size()-1])
-//             continue;
-
-//         this->getTransitionSystem()->applyAction(child_state, this->app_actions[i]);
-//         this->incrementStateGenCount();
-
-//         StateHash child_hash = this->hash_func->getStateHash(child_state);
-//         NodeID child_id;
-//         StateLocation child_loc = this->open_closed_list.getStateLocation(child_state, child_hash, child_id);
-
-//         if(child_loc == StateLocation::open || child_loc == StateLocation::closed) {
-//             if(fp_less(child_g, this->open_closed_list.getNode(child_id).g_cost)) {
-//                 this->open_closed_list.getNode(child_id).g_cost = child_g;
-//                 this->open_closed_list.getNode(child_id).eval = nodeEval(child_state, child_g,
-//                         this->open_closed_list.getNode(child_id).h_value);
-//                 this->open_closed_list.getNode(child_id).parent_id = to_expand_id;
-//                 this->open_closed_list.getNode(child_id).gen_action = this->app_actions[i];
-
-//                 if(child_loc == StateLocation::open)
-//                     this->open_closed_list.openNodeEvalChanged(child_id);
-//                 else
-//                     this->open_closed_list.reopenNode(child_id);
-//             }
-//         } else {
-
-//             if(this->hitHCompLimit())
-//                 return BfsExpansionResult::res_limit;
-
-//             double child_eval = nodeEval(child_state, child_g, child_h);
-
-//             //std::cout << "New Child " << child_state << " eval " << child_eval << std::endl;
-//             this->open_closed_list.addNewNodeToOpen(child_state, this->app_actions[i], child_hash, child_g, child_h, child_eval,
-//                     to_expand_id);
-//         }
-//     }
-
-//     return BfsExpansionResult::no_solution;
-// }
-
 template<class state_t, class action_t>
 bool AWAStar<state_t, action_t>::skipNodeForGeneration(state_t child_state, double child_g)
 {   
@@ -166,7 +75,7 @@ bool AWAStar<state_t, action_t>::skipNodeForGeneration(state_t child_state, doub
     double child_h = this->heur_func->getHValue(child_state);
     double child_eval_admissible = nodeEvalAdmissible(child_state, child_g, child_h);
 
-    if (child_eval_admissible >= incumbent_g_costs[incumbent_g_costs.size()-1])
+    if (child_eval_admissible > incumbent_g_costs[incumbent_g_costs.size()-1])
         return true;
 
     return false;
@@ -216,35 +125,6 @@ inline double AWAStar<state_t, action_t>::nodeEvalAdmissible(const state_t& stat
 {
     return g_cost + h_cost;
 }
-
-
-
-// template<class state_t, class action_t>
-// SearchTermType AWAStar<state_t, action_t>::getPlan(const state_t& init_state, std::vector<action_t>& sol_plan)
-// {
-
-//     resetEngine();
-
-//     if(alg_status == SearchStatus::not_ready)
-//         return SearchTermType::engine_not_ready;
-
-//     alg_status = SearchStatus::active;
-
-//     while(open_closed_list.isOpenEmpty()) {
-//         SearchTermType term = searchForPlan(init_state);
-//     }
-
-//     alg_status = SearchStatus::terminated;
-
-//     sol_plan.clear();
-//     if(incumbent_plan.size() > 0) {
-//         for(unsigned i = 0; i < incumbent_plan.size(); i++) {
-//             sol_plan.push_back(incumbent_plan[i]);
-//         }
-//     }
-
-//     return term;
-// }
 
 
 #endif /* A_STAR_H_ */

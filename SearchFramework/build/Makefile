@@ -10,6 +10,7 @@ HEADERS = \
 	domains/tile_puzzle/tile_puzzle_state.h \
 	domains/tile_puzzle/tile_puzzle_transitions.h \
 	domains/tile_puzzle/tile_manhattan_distance.h \
+	domains/tile_puzzle/tile_correct_placement.h \
 	domains/map_pathfinding/map_location.h \
 	domains/map_pathfinding/map_pathfinding_transitions.h \
 	domains/map_pathfinding/map_manhattan_distance.h \
@@ -25,6 +26,7 @@ HEADERS = \
 	algorithms/best_first_search/awa_star.h \
 	algorithms/best_first_search/weighted_a_star.h \
 	algorithms/best_first_search/e_weighted_a_star.h \
+	algorithms/best_first_search/epsilon_awa_star.h \
 	utils/string_utils.h \
 	utils/combinatorics.h
 

@@ -59,10 +59,12 @@ double TileManhattanDistance::computeHValue(const TilePuzzleState& state) const
     double h_value = 0.0;
 
     for(unsigned pos = 0; pos < state.permutation.size(); pos++) {
+        // printf("%d ", state.permutation[pos]);
         if(pos != state.blank_loc) {
             unsigned tile = state.permutation[pos];
             h_value += tile_h_value[tile][pos];
         }
     }
+    // printf("\nh: %f\n\n", h_value);
     return h_value;
 }
