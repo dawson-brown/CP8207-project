@@ -14,6 +14,8 @@
 #include "node_table.h"
 #include <stdio.h>
 #include <iostream>
+#include <math.h>  
+#include <random>
 
 typedef unsigned BFSOpenLocation; ///< The location of a node in the open list heap.
 
@@ -125,6 +127,8 @@ public:
      */
     BFSNode<state_t, action_t> &getNode(NodeID id);
 
+    std::vector<NodeID> getOpenListHeap();
+
     /**
      * Returns a const reference to a node corresponding to the given id.
      *
@@ -162,18 +166,11 @@ public:
             double h, double node_eval);
 
     /**
-     * Finds the best node in the open list according to the node evaluation, returns its id, and moves it to closed.
+     * Finds the node in the open list at open_list_i, returns its id, and moves it to closed.
      *
-     * @return The node id of the best node on the open list.
+     * @return the NodeID at index open_list_i
      */
-    virtual NodeID getBestNodeAndClose();
-
-    /**
-     * Gets a random node, returns its id, and moves it to closed.
-     *
-     * @return The node id of a random node on the open list.
-     */
-    virtual NodeID getRandomNodeAndClose();
+    virtual NodeID getNodeAndClose(unsigned open_list_i);
 
     /**
      * Adjusts the open list as needed because the node evaluation of the node with the given id has changed.
@@ -465,40 +462,26 @@ void OpenClosedList<state_t, action_t>::reopenNode(NodeID id)
 }
 
 template<class state_t, class action_t>
-NodeID OpenClosedList<state_t, action_t>::getBestNodeAndClose()
+NodeID OpenClosedList<state_t, action_t>::getNodeAndClose(unsigned open_list_i)
 {
     assert(!open_list_heap.empty());
 
-    NodeID best_id = open_list_heap[0];
+    NodeID best_id = open_list_heap[open_list_i];
     node_table[best_id].in_open = false;
 
-    open_list_heap[0] = open_list_heap.back();
-    node_table.getNode(open_list_heap[0]).location = 0;
+    open_list_heap[open_list_i] = open_list_heap.back();
+    node_table.getNode(open_list_heap[open_list_i]).location = 0;
     open_list_heap.pop_back();
 
-    heapifyDown(0);
+    heapifyDown(open_list_i);
 
     // printf("best g: %f, best h: %f, eval: %f\n", getNode(best_id).g_cost, getNode(best_id).h_value, getNode(best_id).eval );
     return best_id;
 }
 
 template<class state_t, class action_t>
-NodeID OpenClosedList<state_t, action_t>::getRandomNodeAndClose()
-{
-    assert(!open_list_heap.empty());
-
-    int random_choice = rand() % open_list_heap.size();
-    NodeID best_id = open_list_heap[random_choice];
-    node_table[best_id].in_open = false;
-
-    open_list_heap[random_choice] = open_list_heap.back();
-    node_table.getNode(open_list_heap[random_choice]).location = 0;
-    open_list_heap.pop_back();
-
-    heapifyDown(random_choice);
-
-    // printf("best g: %f, best h: %f, eval: %f\n", getNode(best_id).g_cost, getNode(best_id).h_value, getNode(best_id).eval );
-    return best_id;
+std::vector<NodeID> OpenClosedList<state_t, action_t>::getOpenListHeap() {
+    return open_list_heap;
 }
 
 template<class state_t, class action_t>

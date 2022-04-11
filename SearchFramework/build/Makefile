@@ -27,6 +27,7 @@ HEADERS = \
 	algorithms/best_first_search/weighted_a_star.h \
 	algorithms/best_first_search/e_weighted_a_star.h \
 	algorithms/best_first_search/epsilon_awa_star.h \
+	algorithms/best_first_search/beta_awa_star.h \
 	utils/string_utils.h \
 	utils/combinatorics.h
 

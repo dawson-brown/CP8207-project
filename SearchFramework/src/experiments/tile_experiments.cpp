@@ -17,6 +17,7 @@
 #include "../generic_defs/single_goal_test.h"
 #include "../algorithms/best_first_search/awa_star.h"
 #include "../algorithms/best_first_search/epsilon_awa_star.h"
+#include "../algorithms/best_first_search/beta_awa_star.h"
 #include "../algorithms/best_first_search/weighted_a_star.h"
 #include "../algorithms/best_first_search/e_weighted_a_star.h"
 #include "../generic_defs/permutation_hash_function.h"
@@ -28,10 +29,6 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
 
     TilePuzzleTransitions tile_ops(3, 4, TileCostType::unit);
     TilePuzzleState goal_state(3, 4);
@@ -41,81 +38,137 @@ int main(int argc, char **argv)
     TileCorrectPlacement correct_placement(goal_state, tile_ops);
 
     // Anytime weighted A*
-    // AWAStar<TilePuzzleState, BlankSlide> awa_star(25);
-    // awa_star.setTransitionSystem(&tile_ops);
-    // awa_star.setGoalTest(&goal_test);
-    // awa_star.setHashFunction(&tile_hash);
-    // awa_star.setHeuristic(&correct_placement);
+    AWAStar<TilePuzzleState, BlankSlide> awa_star(1.3);
+    awa_star.setTransitionSystem(&tile_ops);
+    awa_star.setGoalTest(&goal_test);
+    awa_star.setHashFunction(&tile_hash);
+    awa_star.setHeuristic(&manhattan);
+    vector<BlankSlide> awa_solution;
+    vector<uint64_t> awa_expansions;
+    vector<vector<double>> awa_costs;
+    vector<unsigned> awa_storage;
+    vector<double> awa_cost;
 
     // Epsilon-AWA*
-    EpsilonAWAStar<TilePuzzleState, BlankSlide> e_awa_star(0.1, 10);
+    EpsilonAWAStar<TilePuzzleState, BlankSlide> e_awa_star(0.1, 1.3);
     e_awa_star.setTransitionSystem(&tile_ops);
     e_awa_star.setGoalTest(&goal_test);
     e_awa_star.setHashFunction(&tile_hash);
     e_awa_star.setHeuristic(&manhattan);
-
-    // Epsilon weighted A*
-    // EpsilonWAStar<TilePuzzleState, BlankSlide> e_wa_star(10, 0.1);
-    // e_wa_star.setTransitionSystem(&tile_ops);
-    // e_wa_star.setGoalTest(&goal_test);
-    // e_wa_star.setHashFunction(&tile_hash);
-    // e_wa_star.setHeuristic(&manhattan);
-
-
-    vector<vector<unsigned> > starts;
-
-    vector<BlankSlide> awa_solution;
-    vector<uint64_t> awa_expansions;
-    vector<vector<double>> awa_costs;
-
     vector<BlankSlide> e_awa_solution;
     vector<uint64_t> e_awa_expansions;
     vector<vector<double>> e_awa_costs;
+    vector<unsigned> e_awa_storage;
+    vector<double> e_awa_cost;
 
+    //BETA-AWA*
+    BetaAWAStar<TilePuzzleState, BlankSlide> beta_awa_star(0.1, 1.3, 5.0, 0.75);
+    beta_awa_star.setTransitionSystem(&tile_ops);
+    beta_awa_star.setGoalTest(&goal_test);
+    beta_awa_star.setHashFunction(&tile_hash);
+    beta_awa_star.setHeuristic(&manhattan);
+    vector<BlankSlide> beta_awa_solution;
+    vector<uint64_t> beta_awa_expansions;
+    vector<vector<double>> beta_awa_costs;
+    vector<unsigned> beta_awa_storage;
+    vector<double> beta_awa_cost;
+
+
+    vector<vector<unsigned> > starts;
     read_in_permutations("../src/domains/tile_puzzle/tile_files/3x4_puzzle.probs", starts);
+    unsigned experiments = starts.size();
 
-    for(unsigned i = 0; i < starts.size(); i++) {
-
-        printf("Puzzle: %d\n", i);
+    for(unsigned i = 0; i < experiments; i++) {
 
         TilePuzzleState start_state(starts[i], 3, 4);
-        // awa_star.getPlan(start_state, awa_solution);
-        // awa_costs.push_back(awa_star.getSolutionCosts());
 
-        SearchTermType res = e_awa_star.getPlan(start_state, e_awa_solution);
+        // A*
+        // a_star.getPlan(start_state, a_solution);
+        // a_cost.push_back(a_star.getLastPlanCost());
 
-        if (res == SearchTermType::res_limit) 
-            printf("Ran out of resources\n");
+        // AWA*
+        awa_star.getPlan(start_state, awa_solution);
+        awa_costs.push_back(awa_star.getSolutionCosts());
+        awa_expansions.push_back(awa_star.getGoalTestCount());
+        awa_storage.push_back(awa_star.getStateGenCount());
+
+        // e-AWA*
+        e_awa_star.getPlan(start_state, e_awa_solution);
         e_awa_costs.push_back(e_awa_star.getSolutionCosts());
-        // awa_expansions.push_back(awa_star.getGoalTestCount());
+        e_awa_expansions.push_back(e_awa_star.getGoalTestCount());
+        e_awa_storage.push_back(e_awa_star.getStateGenCount());
 
+        // beta-AWA*
+        beta_awa_star.getPlan(start_state, beta_awa_solution);
+        beta_awa_costs.push_back(beta_awa_star.getSolutionCosts());
+        beta_awa_expansions.push_back(beta_awa_star.getGoalTestCount());
+        beta_awa_storage.push_back(beta_awa_star.getStateGenCount());
+
+        // WA*
         // wa_star.getPlan(start_state, wa_solution);
         // wa_lengths.push_back(wa_star.getLastPlan().size());
         // wa_expansions.push_back(wa_star.getGoalTestCount());
 
+        // e-WA*
         // e_wa_star.getPlan(start_state, e_wa_solution);
         // e_wa_lengths.push_back(e_wa_star.getLastPlan().size());
         // e_wa_expansions.push_back(e_wa_star.getGoalTestCount());
 
     }
 
-    // for (unsigned i = 0; i<wa_lengths.size(); i++){
-    //     printf("Lenghts.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n", a_lengths[i], wa_lengths[i], e_wa_lengths[i]);
-    //     printf("Expansions.... A*: %ld -- Weighted: %ld  --  Epsilon: %ld\n\n", a_expansions[i], wa_expansions[i], e_wa_expansions[i]);
-    // }
+    double num_experiments = (double) experiments; 
 
-    for (unsigned i = 0; i<1; i++){
-        // printf("%ld solutions found\n", awa_costs[i].size());
-        // for (unsigned j = 0; j<awa_costs[i].size(); j++){
-        //     printf("Cost.... AWA: %f\n", awa_costs[i][j]);
-        // }
+    // AWA*
+    printf("A*\n");
+    size_t total_found = 0;
+    uint64_t total_exp = 0;
+    unsigned total_stored = 0;
+    for (unsigned i = 0; i<experiments; i++){
 
-        printf("\n%ld solutions found\n", e_awa_costs[i].size());
-        for (unsigned j = 0; j<e_awa_costs[i].size(); j++){
-            printf("Cost -- E-AWA*: %f\n", e_awa_costs[i][j]);
-        }
-        printf("\n===================\n\n");
+        total_found += awa_costs[i].size();
+        total_exp += awa_expansions[i];
+        total_stored += awa_storage[i];
+
     }
+    printf("Average found: %lf\n", (double) total_found / num_experiments );
+    printf("Average stored: %lf\n", (double) total_stored / num_experiments);
+    printf("Average expanded: %lf\n", (double) total_exp / num_experiments);
+    printf("\n===================\n\n");
+
+    // e-AWA*
+    printf("e-AWA*\n");
+    total_found = 0;
+    total_exp = 0;
+    total_stored = 0;
+    for (unsigned i = 0; i<experiments; i++){
+
+        total_found += e_awa_costs[i].size();
+        total_exp += e_awa_expansions[i];
+        total_stored += e_awa_storage[i];
+
+    }
+    printf("Average found: %lf\n", (double) total_found / num_experiments );
+    printf("Average stored: %lf\n", (double) total_stored / num_experiments);
+    printf("Average expanded: %lf\n", (double) total_exp / num_experiments);
+    printf("\n===================\n\n");
+
+
+    // beta-AWA*
+    printf("beta-AWA*\n");
+    total_found = 0;
+    total_exp = 0;
+    total_stored = 0;
+    for (unsigned i = 0; i<experiments; i++){
+
+        total_found += beta_awa_costs[i].size();
+        total_exp += beta_awa_expansions[i];
+        total_stored += beta_awa_storage[i];
+
+    }
+    printf("Average found: %lf\n", (double) total_found / num_experiments );
+    printf("Average stored: %lf\n", (double) total_stored / num_experiments);
+    printf("Average expanded: %lf\n", (double) total_exp / num_experiments);
+    printf("\n===================\n\n");
 
     return 0;
 }

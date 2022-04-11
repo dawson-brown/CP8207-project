@@ -125,7 +125,7 @@ protected:
      *
      * @return bool
      */
-    virtual bool skipNodeForGeneration(state_t child_state, double child_g);
+    virtual bool skipNodeForGeneration(state_t child_state, double child_g, double child_h);
 
     /**
      * Extracts the path that ends at the node for the given id and stores it as the incumbent plan.
@@ -200,12 +200,12 @@ void BestFirstSearch<state_t, action_t>::resetStatistics()
 template<class state_t, class action_t>
 NodeID BestFirstSearch<state_t, action_t>::getNodeForExpansion()
 {
-    return open_closed_list.getBestNodeAndClose();
+    return open_closed_list.getNodeAndClose(0);
 }
 
 
 template<class state_t, class action_t>
-bool BestFirstSearch<state_t, action_t>::skipNodeForGeneration(state_t child_state, double child_g)
+bool BestFirstSearch<state_t, action_t>::skipNodeForGeneration(state_t child_state, double child_g, double child_h)
 {
     return false;
 }
@@ -255,12 +255,14 @@ BfsExpansionResult BestFirstSearch<state_t, action_t>::nodeExpansion()
 
         state_t child_state = to_expand_node.state;
 
-        // printf("nodeExpansion 3\n");
-        if (skipNodeForGeneration(child_state, child_g))
-            continue;
-        // printf("nodeExpansion 4\n");
         op_system->applyAction(child_state, app_actions[i]);
         incrementStateGenCount();
+
+        incrementHCompCount();
+        heur_func->prepareToCompute();
+        double child_h = heur_func->getHValue(child_state);
+        if (skipNodeForGeneration(child_state, child_g, child_h))
+            continue;
 
         StateHash child_hash = hash_func->getStateHash(child_state);
         NodeID child_id;
@@ -284,12 +286,7 @@ BfsExpansionResult BestFirstSearch<state_t, action_t>::nodeExpansion()
             if(hitHCompLimit())
                 return BfsExpansionResult::res_limit;
 
-            incrementHCompCount();
-            heur_func->prepareToCompute();
-            double child_h = heur_func->getHValue(child_state);
             double child_eval = nodeEval(child_state, child_g, child_h);
-
-            //std::cout << "New Child " << child_state << " eval " << child_eval << std::endl;
             open_closed_list.addNewNodeToOpen(child_state, app_actions[i], child_hash, child_g, child_h, child_eval,
                     to_expand_id);
         }
