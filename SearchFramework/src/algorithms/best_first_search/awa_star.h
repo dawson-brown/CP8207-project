@@ -16,6 +16,7 @@
 #include "e_weighted_a_star.h"
 #include "best_first_search.h"
 #include "open_closed_list.h"
+#include <ctime>
 
 
 template<class state_t, class action_t>
@@ -31,21 +32,28 @@ public:
      *
      * @return all found solution costs.
      */
-    std::vector<double> getSolutionCosts(); 
+    std::vector<double> getSolutionCosts();
 
     /**
-     * Returns the list of lower bounds on solution costs.
-     *
-     * @return all lower bounds after each iteration.
+     * @brief get the time it took between each solution
+     * 
      */
-    // std::vector<double> getLowerBounds(); 
+    std::vector<double> getTimeBetweenSolutions();
+
+    /**
+     * Returns the list of costs found at fixed time intervals
+     *
+     * @return list of solution costs
+     */
+    std::vector<double> getIntervalCosts(); 
 
 
 protected:
     virtual void resetEngine();
     virtual SearchTermType searchForPlan(const state_t &init_state);
     std::vector<double> incumbent_g_costs;
-    // std::vector<double> lower_bounds;
+    std::vector<double> time_between_solutions;
+    std::vector<double> interval_costs;
     virtual double nodeEvalAdmissible(const state_t &state, double g_cost, double h_cost);
 
     /**
@@ -68,17 +76,24 @@ std::vector<double> AWAStar<state_t, action_t>::getSolutionCosts()
     return incumbent_g_costs;
 }
 
-// template<class state_t, class action_t>
-// std::vector<double> AWAStar<state_t, action_t>::getLowerBounds()
-// {
-//     return lower_bounds;
-// }
+template<class state_t, class action_t>
+std::vector<double> AWAStar<state_t, action_t>::getTimeBetweenSolutions()
+{
+    return time_between_solutions;
+}
+
+template<class state_t, class action_t>
+std::vector<double> AWAStar<state_t, action_t>::getIntervalCosts()
+{
+    return interval_costs;
+}
 
 template<class state_t, class action_t>
 void AWAStar<state_t, action_t>::resetEngine()
 {
-    // lower_bounds.clear();
+    interval_costs.clear();
     incumbent_g_costs.clear();
+    time_between_solutions.clear();
     BestFirstSearch<state_t, action_t>::resetEngine();
 }
 
@@ -99,7 +114,14 @@ template<class state_t, class action_t>
 SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_state)
 {
 
+/* timer decl */
+    std::clock_t start;
+    double duration;
+
     BfsExpansionResult exp_result;
+
+/* timer start */
+    // start = std::clock();
 
     this->heur_func->prepareToCompute();
     double init_h = this->heur_func->getHValue(init_state);
@@ -107,39 +129,74 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
     this->pubIncrementHCompCount();
 
     double init_eval = this->nodeEval(init_state, 0.0, init_h);
-    // lower_bounds.push_back(init_h);
 
     this->open_closed_list.addInitialNodeToOpen(init_state, this->getTransitionSystem()->getDummyAction(), this->hash_func->getStateHash(init_state),
             init_h, init_eval);
+
+/* convergence timer */
+    start = std::clock();
+
+/* convergence expansions */
+    // unsigned conv_exp = 50000;
 
     while( true ){
 
         exp_result = this->nodeExpansion();
 
+    /* convergence expansions */
+        // if (this->getGoalTestCount() >= conv_exp) {
+        //     // printf("Interval\n");
+        //     if (incumbent_g_costs.size() > 0)
+        //         interval_costs.push_back(incumbent_g_costs.back());
+        //     else
+        //         interval_costs.push_back(DBL_MAX);
+        //     conv_exp += 50000;
+        // }
+
+    /* convergence timer */
+        duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+        if (duration >= 1.0) {
+            if (incumbent_g_costs.size() > 0)
+                interval_costs.push_back(incumbent_g_costs.back());
+            else
+                interval_costs.push_back(DBL_MAX);
+            start = std::clock();
+        }
+
         if (exp_result == BfsExpansionResult::goal_found) {
+
+        /* timer end */
+            // duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+            // time_between_solutions.push_back(duration);
+
             incumbent_g_costs.push_back(this->getLastPlanCost());
 
-            // // // comment out for time complexity eval
-            // double min_f = DBL_MAX;
-            // std::vector<NodeID> open_list = this->open_closed_list.getOpenListHeap();
-            // for (size_t i=0; i<open_list.size(); i++) {
-            //     NodeID node_id = open_list[i];
-            //     BFSNode<state_t, action_t> node = this->open_closed_list.getNode(node_id);
-            //     double f_cost = nodeEvalAdmissible(node.state, node.g_cost, node.h_value);
-            //     if (f_cost < min_f) {
-            //         min_f = f_cost;
-            //     }
-            // }
-            // lower_bounds.push_back(incumbent_g_costs.back() - min_f);
+        /* timer start */
+            // start = std::clock();
 
         } else if (exp_result == BfsExpansionResult::res_limit){
             return SearchTermType::res_limit;
         }
 
         if (exp_result == BfsExpansionResult::empty_open){
+        
+        /* timer end */
+            // duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+            // time_between_solutions.push_back(duration);
+
             incumbent_g_costs.push_back(this->getLastPlanCost());
             break;
         }
+
+    /* convergence time limit */
+        if (interval_costs.size() >= 60) {
+            break;
+        }
+
+    /* convergence expansion limit */
+        // if (this->getGoalTestCount() >= 3000000) {
+        //     break;
+        // }    
     }
 
     return SearchTermType::completed;

@@ -1,0 +1,152 @@
+Puzzle: 0
+Puzzle: 1
+Puzzle: 2
+Puzzle: 3
+Puzzle: 4
+Puzzle: 5
+Puzzle: 6
+Puzzle: 7
+Puzzle: 8
+Puzzle: 9
+Puzzle: 10
+Puzzle: 11
+Puzzle: 12
+Puzzle: 13
+Puzzle: 14
+Puzzle: 15
+Puzzle: 16
+Puzzle: 17
+Puzzle: 18
+Puzzle: 19
+Puzzle: 20
+Puzzle: 21
+Puzzle: 22
+Puzzle: 23
+Puzzle: 24
+Puzzle: 25
+Puzzle: 26
+Puzzle: 27
+Puzzle: 28
+Puzzle: 29
+Puzzle: 30
+Puzzle: 31
+Puzzle: 32
+Puzzle: 33
+Puzzle: 34
+Puzzle: 35
+Puzzle: 36
+Puzzle: 37
+Puzzle: 38
+Puzzle: 39
+Puzzle: 40
+Puzzle: 41
+Puzzle: 42
+Puzzle: 43
+Puzzle: 44
+Puzzle: 45
+Puzzle: 46
+Puzzle: 47
+Puzzle: 48
+Puzzle: 49
+Puzzle: 50
+Puzzle: 51
+Puzzle: 52
+Puzzle: 53
+Puzzle: 54
+Puzzle: 55
+Puzzle: 56
+Puzzle: 57
+Puzzle: 58
+Puzzle: 59
+Puzzle: 60
+Puzzle: 61
+Puzzle: 62
+Puzzle: 63
+Puzzle: 64
+Puzzle: 65
+Puzzle: 66
+Puzzle: 67
+Puzzle: 68
+Puzzle: 69
+Puzzle: 70
+Puzzle: 71
+Puzzle: 72
+Puzzle: 73
+Puzzle: 74
+Puzzle: 75
+Puzzle: 76
+Puzzle: 77
+Puzzle: 78
+Puzzle: 79
+Puzzle: 80
+Puzzle: 81
+Puzzle: 82
+Puzzle: 83
+Puzzle: 84
+Puzzle: 85
+Puzzle: 86
+Puzzle: 87
+Puzzle: 88
+Puzzle: 89
+Puzzle: 90
+Puzzle: 91
+Puzzle: 92
+Puzzle: 93
+Puzzle: 94
+Puzzle: 95
+Puzzle: 96
+Puzzle: 97
+Puzzle: 98
+Puzzle: 99
+0.752277
+0.838063
+0.861068
+0.880431
+0.893211
+0.898625
+0.907307
+0.914357
+0.919733
+0.923393
+0.926013
+0.932515
+0.933785
+0.935873
+0.936925
+0.938730
+0.941225
+0.942562
+0.946012
+0.947880
+0.949275
+0.952384
+0.953360
+0.953360
+0.955892
+0.958393
+0.960115
+0.961550
+0.962392
+0.962866
+0.963892
+0.965832
+0.967238
+0.967238
+0.968878
+0.971092
+0.972093
+0.973061
+0.973061
+0.973061
+0.974061
+0.974442
+0.974442
+0.975463
+0.978082
+0.979070
+0.981084
+0.984511
+0.993544
+0.996729
+0.996729
+0.997598

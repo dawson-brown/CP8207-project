@@ -65,7 +65,7 @@ NodeID BetaAWAStar<state_t, action_t>::getNodeForExpansion()
         unsigned end_of_row = 2*start_of_row;
 
         unsigned sample_i = start_of_row + rand() % (( end_of_row + 1 ) - start_of_row);
-        if (sample_i >= this->open_closed_list.openListSize()) 
+        if (sample_i >= this->open_closed_list.openListSize()) // noticed too late that this biases the last element of the last row
             sample_i = this->open_closed_list.openListSize()-1;
 
         return this->open_closed_list.getNodeAndClose(sample_i);

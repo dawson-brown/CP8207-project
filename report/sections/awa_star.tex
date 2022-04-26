@@ -1,0 +1,27 @@
+\section{Background: AWA*}
+
+
+\begin{algorithm}
+\caption{AWA*}\label{alg:awa}
+\begin{algorithmic}[1]
+\Require $f'(n)=g(n)+wh(n)$, $f(n)=g(n)+h(n)$
+\State $g(init) = 0$
+\State $OPEN \gets \{init\}, CLOSED \gets \emptyset$
+\State $best \gets $ None, $f(best) \gets \infty$ 
+\While {$OPEN \neq \emptyset$}
+    \State $n \gets \argmin_{n' \in OPEN}f'(n')$
+    \If {$f(n) < f(best)$}
+        \State $CLOSED \gets CLOSED \cup \{n\}$ 
+        \For{$n_i \in Succ(n)$ \textbf{if} $f(n)<f(best)$}
+            \If{}
+                \State $f(n_i) \gets g(n_i)+c(n,n_i)$ 
+                \State $best \gets n_i$  
+                \State Continue
+            \EndIf
+            \State \vdots
+        \EndFor
+    \EndIf
+\EndWhile
+\State \Return $best$
+\end{algorithmic}
+\end{algorithm}
