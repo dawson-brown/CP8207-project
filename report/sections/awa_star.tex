@@ -1,5 +1,16 @@
-\section{Background: AWA*}
+\section{Background}
+For this study, I drew on Anytime Weighted A* (AWA*) as well as concepts in knowledge free exploration techniques.
 
+\subsection{AWA*}
+Hansen and Zhou introduced a method for converting Weighted A* into an Anytime algorithm giving Anytime Weighted A* \cite{hansen2007anytime}. To do so, three things are required:
+
+\begin{enumerate}
+    \item An inadmissible evaluation function for selecting nodes for expansion. In the case of AWA* that's a weighted heuristic \cite{hansen2007anytime}.
+    \item The search must continue after a (likely suboptimal) solution is so improved solutions can be found \cite{hansen2007anytime}.
+    \item An admissible evaluation function which serves as a lower bound, along with the upper bound being the cost of the best solution found so for, both of which can be used to prune the open list until it's empty at which point the last found solution must be optimal \cite{hansen2007anytime}.
+\end{enumerate}
+
+Algorithm \ref{alg:awa} gives the details of the `anytime' part of AWA*--the steps omitted at line 14 are those that are part of normal WA*.
 
 \begin{algorithm}
 \caption{AWA*}\label{alg:awa}
@@ -13,7 +24,7 @@
     \If {$f(n) < f(best)$}
         \State $CLOSED \gets CLOSED \cup \{n\}$ 
         \For{$n_i \in Succ(n)$ \textbf{if} $f(n)<f(best)$}
-            \If{}
+            \If{$n_i$ is goal}
                 \State $f(n_i) \gets g(n_i)+c(n,n_i)$ 
                 \State $best \gets n_i$  
                 \State Continue
@@ -25,3 +36,13 @@
 \State \Return $best$
 \end{algorithmic}
 \end{algorithm}
+
+This approach is largely agnostic to the internals of the search being done so long as nodes are explored in some best first ordering that allows for open list pruning \cite{hansen2007anytime}. This makes it possible to include randomized exploration techniques in AWA*.
+
+\subsection{Exploration}
+Knowledge-free random exploration has shown promise in satisficing search, in particular GBFS \cite{valenzano2014comparison}. Here, Valenzano \textit{et al.} describe $\epsilon$-GBFS in which with probability $(1-\epsilon)$ the node with the smallest heuristic value is chosen for expansion, otherwise, a node is chosen uniformly at random from the open list \cite{valenzano2014comparison}. In their experimentation, adding $\epsilon$-greedy node selection added a lot of value in several domains \cite{valenzano2014comparison}.
+
+Despite showing improvement in some domains, and its relative simplicity, strictly random exploration (with probability $\epsilon$) runs into problems when large local minima or plateaus are encountered. This is because the open list will come to be dominated by that plateau and so sampling randomly will still expand a node on the plateau which is in part what exploration is trying to avoid \cite{xie2014type}\cite{cohen2021type}. To address this, Xie \textit{et al.} proposed type based exploration in which nodes are bucketed by f-cost, and then a bucket is sampled uniformly at random and then a node within that bucket is sampled \cite{xie2014type}. This approach achieves a much better spread over the state space than simple $\epsilon$ random sampling \cite{xie2014type}.
+
+Cohen \textit{et al.} show that WA* can also fall prey to these large plateaus (termed uninformed heuristic regions) and Type-based exploration can alleviate this \cite{cohen2021type}. To this end, they merge Type-Based exploration with WA* to give Type-WA* \cite{cohen2021type}. 
+

@@ -28,6 +28,8 @@ public:
     // AWAStar(double weight, double epsilon) : EpsilonWAStar<state_t, action_t>(weight, epsilon) {};
     virtual ~BetaAWAStar();
 
+    void setEpsilon(double epsilon);
+
 
 protected:
     double epsilon;
@@ -48,6 +50,12 @@ protected:
 template<class state_t, class action_t>
 inline BetaAWAStar<state_t, action_t>::~BetaAWAStar()
 {
+}
+
+template<class state_t, class action_t>
+void BetaAWAStar<state_t, action_t>::setEpsilon(double epsilon)
+{
+    this->epsilon = epsilon;
 }
 
 template<class state_t, class action_t>

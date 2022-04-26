@@ -27,6 +27,8 @@ public:
     // AWAStar(double weight, double epsilon) : EpsilonWAStar<state_t, action_t>(weight, epsilon) {};
     virtual ~EpsilonAWAStar();
 
+    void setEpsilon(double epsilon);
+
 
 protected:
     double epsilon;
@@ -46,6 +48,11 @@ inline EpsilonAWAStar<state_t, action_t>::~EpsilonAWAStar()
 {
 }
 
+template<class state_t, class action_t>
+void EpsilonAWAStar<state_t, action_t>::setEpsilon(double epsilon)
+{
+    this->epsilon = epsilon;
+}
 
 template<class state_t, class action_t>
 NodeID EpsilonAWAStar<state_t, action_t>::getNodeForExpansion()

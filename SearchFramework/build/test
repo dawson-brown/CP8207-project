@@ -1,0 +1,55 @@
+
+--------------- Weight 1.300000 ---------------
+Doing AWA*...
+Average time to optaim solution: 2.256135
+Average found: 3.140000
+Average stored: 529095.350000
+Average expanded: 186038.150000
+
+===================
+
+Doing e-AWA*...
+Average time to optaim solution: 2.147255
+Average found: 3.130000
+Average stored: 603706.600000
+Average expanded: 211198.920000
+
+===================
+
+Doing beta-AWA*...
+Average time to optaim solution: 2.156255
+Average found: 2.970000
+Average stored: 589437.600000
+Average expanded: 206175.070000
+
+===================
+
+
+--------------- Weight 5.000000 ---------------
+Doing AWA*...
+Average time to optaim solution: 16.387387
+Average found: 21.910000
+Average stored: 4003219.500000
+Average expanded: 1408646.740000
+
+===================
+
+Doing e-AWA*...
+Average time to optaim solution: 6.650520
+Average found: 15.660000
+Average stored: 1780788.610000
+Average expanded: 622837.790000
+
+===================
+
+Doing beta-AWA*...
+Average time to optaim solution: 6.344846
+Average found: 15.410000
+Average stored: 1680521.610000
+Average expanded: 587692.640000
+
+===================
+
+
+--------------- Weight 10.000000 ---------------
+Doing AWA*...

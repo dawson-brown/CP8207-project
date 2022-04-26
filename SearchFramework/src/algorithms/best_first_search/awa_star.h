@@ -47,6 +47,8 @@ public:
      */
     std::vector<double> getIntervalCosts(); 
 
+    void setWeight(double weight);
+
 
 protected:
     virtual void resetEngine();
@@ -68,6 +70,12 @@ protected:
 template<class state_t, class action_t>
 inline AWAStar<state_t, action_t>::~AWAStar()
 {
+}
+
+template<class state_t, class action_t>
+void AWAStar<state_t, action_t>::setWeight(double weight)
+{
+    this->weight = weight;
 }
 
 template<class state_t, class action_t>
@@ -115,8 +123,8 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
 {
 
 /* timer decl */
-    std::clock_t start;
-    double duration;
+    // std::clock_t start;
+    // double duration;
 
     BfsExpansionResult exp_result;
 
@@ -134,7 +142,7 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
             init_h, init_eval);
 
 /* convergence timer */
-    start = std::clock();
+    // start = std::clock();
 
 /* convergence expansions */
     // unsigned conv_exp = 50000;
@@ -154,14 +162,14 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
         // }
 
     /* convergence timer */
-        duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-        if (duration >= 1.0) {
-            if (incumbent_g_costs.size() > 0)
-                interval_costs.push_back(incumbent_g_costs.back());
-            else
-                interval_costs.push_back(DBL_MAX);
-            start = std::clock();
-        }
+        // duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+        // if (duration >= 1.0) {
+        //     if (incumbent_g_costs.size() > 0)
+        //         interval_costs.push_back(incumbent_g_costs.back());
+        //     else
+        //         interval_costs.push_back(DBL_MAX);
+        //     start = std::clock();
+        // }
 
         if (exp_result == BfsExpansionResult::goal_found) {
 
@@ -189,9 +197,9 @@ SearchTermType AWAStar<state_t, action_t>::searchForPlan(const state_t& init_sta
         }
 
     /* convergence time limit */
-        if (interval_costs.size() >= 60) {
-            break;
-        }
+        // if (interval_costs.size() >= 60) {
+        //     break;
+        // }
 
     /* convergence expansion limit */
         // if (this->getGoalTestCount() >= 3000000) {
