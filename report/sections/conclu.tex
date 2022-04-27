@@ -1,9 +1,9 @@
 \section{Discussion and Conclusion}
 While the results above are promising, the experimentation done was very limited in its scope and left a lot to be desired. 
 
-For starters, very few domains were investigated. Just investigating the tile puzzle makes it difficult to make any general statements about these results. 
+For starters, very few domains were investigated. Just investigating the tile puzzle makes it difficult to make any general statements about these results. In particular, domains that exhibit large uninformed heuristic zones and dead-ends would be very interesting to look at because that's where exploration helps the most.
 
-The investigation into $\alpha \beta$-AWA$^*$ was incomplete because the beta distribution was fixed for all experiments. Discovering any merits or shortcomings of $\alpha \beta$-AWA$^*$ would require a whole set of experiments examining different distributions across various domains. Based on these early results I'd say $\alpha \beta$-AWA$^*$ looks interesting, but the fact it was not convincingly better than random sampling means more experimentation needs to be done. 
+The investigation into \ebawa was premature and incomplete. The \ebgreedy sampling technique should be examined in standard suboptimal search before looking at it in anytime search. Discovering any merits or shortcomings of \ebgreedy sampling would require a whole set of experiments examining different distributions across various domains using different suboptimal search algorithms. Only then should an in depth study into \ebgreedy and anytime search be done. That said, based on these early results, I'd say \ebawa looks promising, but the fact it was not convincingly better than \egreedy sampling means more experimentation needs to be done. 
 
 There are many other exploration techniques that could be evaluated in an anytime context. Type-Based exploration, which appears to perform very well in many domains would be an obvious starting point. 
 
