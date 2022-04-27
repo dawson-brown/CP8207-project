@@ -24,6 +24,12 @@
 \usepackage{multicol}
 \usepackage[section]{placeins}
 
+\newcommand{\egreedy}{$\epsilon$-greedy }
+\newcommand{\ebgreedy}{$\epsilon B$-greedy }
+\newcommand{\awa}{AWA$^*$ }
+\newcommand{\eawa}{$\epsilon$-AWA$^*$ }
+\newcommand{\ebawa}{$\epsilon B$-AWA$^*$ }
+
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
 %
@@ -50,7 +56,7 @@
 \pagestyle{plain}
 
 \begin{abstract}
-    Knowledge free, randomized exploration techniques in heuristic search algorithms have proved very useful. Randomized exploration seeks to avoid large plateaus and even improve the complexity and runtime of a heuristic search algorithm by devoting some time to exploration. The hope is that by improving the coverage of the state space during search, a solution might be yielded faster. Anytime Heuristic Search employs both an admissible and inadmissible heuristic. It uses the inadmissible heuristic to arrive at solutions quickly, while the admissible heuristic is used to prune the open list and slowly converge on the optimal solution; in this way it gets the best of both worlds--the optimal solution in the end, but fast suboptimal solutions in the mean time. In this study, I seek to examine the benefits of employing randomized exploration in an Anytime context. For this, I will use Anytime Weight A* as the baseline and create two exploration techniques giving two Exploration Anytime Algorithms: $\epsilon-$AWA$^*$ and $\alpha\beta-$AWA$^*$. Several experiments using the sliding tile puzzle are used to compare the three algorithms. These experiments convincly demonstrate that using knowledge-free randomized exploration can be very effective in anytime search algorithms and more investigation into the combination of randomized exploration and anytime search is needed. 
+    Knowledge free, randomized exploration techniques in heuristic search algorithms have proved very useful. Randomized exploration seeks to avoid large plateaus and even improve the complexity and runtime of a heuristic search algorithm by devoting some time to exploration. The hope is that by improving the coverage of the state space during search, a solution might be yielded faster. Anytime Heuristic Search employs both an admissible and inadmissible heuristic. It uses the inadmissible heuristic to arrive at solutions quickly, while the admissible heuristic is used to prune the open list and slowly converge on the optimal solution; in this way it gets the best of both worlds--the optimal solution in the end, but fast suboptimal solutions in the mean time. In this study, I seek to examine the benefits of employing randomized exploration in an Anytime context. For this, I will use Anytime Weight A* as the baseline and create two exploration techniques giving two Exploration Anytime Algorithms: \eawa and \ebawa. Several experiments using the sliding tile puzzle are used to compare the three algorithms. These experiments convincly demonstrate that using knowledge-free randomized exploration can be very effective in anytime search algorithms and more investigation into the combination of randomized exploration and anytime search is needed. 
 \end{abstract}
 
 \input{sections/intro.tex}
