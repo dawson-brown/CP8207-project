@@ -9,6 +9,7 @@ There are also two small extensions. In the first, the Inverse Sliding Tile Puzz
 In general, it was found that adding exploration to AWA* for the sliding tile puzzle proved to be very effective. Both $\epsilon-$AWA$^*$ and $\alpha \beta-$AWA$^*$ required fewer incumbent solutions to zero in on the optimal solution, as summarized in Table \ref{tad:num-sol}.
 
 \begin{table}
+\def\arraystretch{1.3}
 \begin{tabular}{ |c||c|c|c|c|c|  }
     \hline
     \multicolumn{6}{|c|}{Average Number of Incumbent Solutions} \\
@@ -16,13 +17,17 @@ In general, it was found that adding exploration to AWA* for the sliding tile pu
     Weight& AWA* & $0.1$-$\epsilon$ &$0.3$-$\epsilon$&$0.1$-$\alpha \beta$ & $0.3$-$\alpha \beta$\\
     \hline
     1.3 & \textbf{2.24} & 2.25 & 2.28 & 2.26 & 2.28\\
+    \hline
     2 & 3.91 & 4.09 & \textbf{3.75} & 3.94 & 3.86\\
+    \hline
     3 & 7.07 & 6.69 & \textbf{6.07} & 6.54 & 6.19\\
+    \hline
     5 & 11.15 & 10.37 & \textbf{9.28} & 10.05 & 9.65\\
+    \hline
     10& 15.49 & 15.03 & \textbf{13.27} & 14.56 & 13.74\\
     \hline
 \end{tabular}
-\caption{Average number of solutions before optimal}\label{tad:num-sol}
+\caption{Incumbent Solutions}\label{tad:num-sol}
 \end{table}
 
 In all cases, except for weight=1.3, $0.1$-$\epsilon-$AWA$^*$ required the fewest incumbent solutions before finding the optimal. However, both exploration were consistently better than standard AWA* by this metric. 
@@ -56,6 +61,77 @@ Here, solution quality is $\frac{incumbent-cost}{optimal-cost}$ for a given prob
 
 \subsection{Inverse Cost Tile Puzzle}
 
+\begin{table}
+\def\arraystretch{1.3}
+\begin{tabular}{ |c||c|c|c|  }
+    \hline
+    \multicolumn{4}{|c|}{Average Number of Incumbent Solutions} \\
+    \hline
+    Weight& AWA* & $0.3$-$\epsilon$-AWA$^*$ & $0.3$-$\alpha\beta$-AWA$^*$\\
+    \hline
+    1.3 & 3.14 & 3.13 & \textbf{2.97} \\
+    \hline
+    5 & 21.91 & 15.66 & \textbf{15.41} \\
+    \hline
+    10& 30.8 & \textbf{20.4} & 21.26 \\
+    \hline
+\end{tabular}
+\caption{Incumbent Solutions}\label{tab:inv-sol}
+\end{table}
+
+\begin{table}
+\def\arraystretch{1.3}
+\begin{tabular}{ |c||c|c|c|  }
+    \hline
+    \multicolumn{4}{|c|}{Average Number of Seconds to Find Optimal} \\
+    \hline
+    Weight& AWA* & $0.3$-$\epsilon$-AWA$^*$ & $0.3$-$\alpha\beta$-AWA$^*$\\
+    \hline
+    1.3 & 2.25 & \textbf{2.15} & \textbf{2.15} \\
+    \hline
+    5 & 16.38 & 6.65 & \textbf{6.34} \\
+    \hline
+    10& 21.57 & \textbf{7.3} & 8.09 \\
+    \hline
+\end{tabular}
+\caption{Runtime}\label{tab:inv-avg-time}
+\end{table}
+
+\begin{table}
+\def\arraystretch{1.3}
+\begin{tabular}{ |c||c|c|c|  }
+    \hline
+    \multicolumn{4}{|c|}{Average Number of Expansions} \\
+    \hline
+    Weight& AWA* & $0.3$-$\epsilon$-AWA$^*$ & $0.3$-$\alpha\beta$-AWA$^*$\\
+    \hline
+    1.3 & \textbf{186,038.15} & 211,198.92 & 206,175.07 \\
+    \hline
+    5 & 1,408,646.74 & 622,837.79 & \textbf{587,692.64} \\
+    \hline
+    10& 1,901,236.58 & \textbf{709,049.28} & 769,546.95 \\
+    \hline
+\end{tabular}
+\caption{Expansions}\label{tab:inv-avg-exp}
+\end{table}
+
+\begin{table}
+\def\arraystretch{1.3}
+\begin{tabular}{ |c||c|c|c|  }
+    \hline
+    \multicolumn{4}{|c|}{Average Number of Node Generations} \\
+    \hline
+    Weight& AWA* & $0.3$-$\epsilon$-AWA$^*$ & $0.3$-$\alpha\beta$-AWA$^*$\\
+    \hline
+    1.3 & \textbf{529,095.35} & 603,706.60 & 589,437.60 \\
+    \hline
+    5 & 4,003,219.50 & 1,780,788.61 & \textbf{1,680,521.61} \\
+    \hline
+    10& 5,401,559.63 & \textbf{2,027,138.81} & 2,200,575.94 \\
+    \hline
+\end{tabular}
+\caption{Generations}\label{tab:inv-avg-gen}
+\end{table}
 
 \subsection{Degraded Heuristic in Unit Cost Sliding Tiles}
 Given the promising results above, it would be expected that when the heuristic gets degraded, exploration should help even more as degraded heuristics result in more plateaus and less confidence about the `best' node in the open list. However, in looking at the summary evaluation of solution quality over time and expansions using the Correct Tile Placement heuristic, this did not turn out to be case, as seen in Figure \ref{fig:conv-correct}.

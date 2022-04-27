@@ -158,32 +158,31 @@ int main(int argc, char **argv)
         double num_experiments = (double) experiments;
 
         // // Anytime weighted A*
-        AWAStar<TilePuzzleState, BlankSlide> awa_star(weights[j]);
-        awa_star.setTransitionSystem(&tile_ops);
-        awa_star.setGoalTest(&goal_test);
-        awa_star.setHashFunction(&tile_hash);
-        awa_star.setHeuristic(&manhattan);
-        vector<BlankSlide> awa_solution;
-        vector<uint64_t> awa_expansions;
-        vector<vector<double>> awa_costs;
-        vector<unsigned> awa_storage;
-        vector<double> awa_cost;
-        // vector<vector<double>> awa_time_between_sols;
+        // AWAStar<TilePuzzleState, BlankSlide> awa_star(weights[j]);
+        // awa_star.setTransitionSystem(&tile_ops);
+        // awa_star.setGoalTest(&goal_test);
+        // awa_star.setHashFunction(&tile_hash);
+        // awa_star.setHeuristic(&manhattan);
+        // vector<BlankSlide> awa_solution;
+        // vector<uint64_t> awa_expansions;
+        // vector<vector<double>> awa_costs;
+        // vector<unsigned> awa_storage;
+        // vector<double> awa_cost;
 
         // // Epsilon-AWA*
-        EpsilonAWAStar<TilePuzzleState, BlankSlide> e_awa_star(0.3, weights[j]);
-        e_awa_star.setTransitionSystem(&tile_ops);
-        e_awa_star.setGoalTest(&goal_test);
-        e_awa_star.setHashFunction(&tile_hash);
-        e_awa_star.setHeuristic(&manhattan);
-        vector<BlankSlide> e_awa_solution;
-        vector<uint64_t> e_awa_expansions;
-        vector<vector<double>> e_awa_costs;
-        vector<unsigned> e_awa_storage;
-        vector<double> e_awa_cost;
+        // EpsilonAWAStar<TilePuzzleState, BlankSlide> e_awa_star(0.3, weights[j]);
+        // e_awa_star.setTransitionSystem(&tile_ops);
+        // e_awa_star.setGoalTest(&goal_test);
+        // e_awa_star.setHashFunction(&tile_hash);
+        // e_awa_star.setHeuristic(&manhattan);
+        // vector<BlankSlide> e_awa_solution;
+        // vector<uint64_t> e_awa_expansions;
+        // vector<vector<double>> e_awa_costs;
+        // vector<unsigned> e_awa_storage;
+        // vector<double> e_awa_cost;
 
         // //BETA-AWA*
-        BetaAWAStar<TilePuzzleState, BlankSlide> beta_awa_star(0.3, weights[j], 5.0, 0.6);
+        BetaAWAStar<TilePuzzleState, BlankSlide> beta_awa_star(0.3, weights[j], 5.0, 2);
         beta_awa_star.setTransitionSystem(&tile_ops);
         beta_awa_star.setGoalTest(&goal_test);
         beta_awa_star.setHashFunction(&tile_hash);
@@ -195,11 +194,12 @@ int main(int argc, char **argv)
         vector<double> beta_awa_cost;
 
         std::clock_t start;
-        double awa_total_time = 0.0;
-        double e_awa_total_time = 0.0;
+        // double awa_total_time = 0.0;
+        // double e_awa_total_time = 0.0;
         double beta_awa_total_time = 0.0;
 
         // AWA*
+    /*
         printf("Doing AWA*...\n");
         for(unsigned i = 0; i < experiments; i++) {
 
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
         printf("Average stored: %lf\n", (double) total_stored / num_experiments);
         printf("Average expanded: %lf\n", (double) total_exp / num_experiments);
         printf("\n===================\n\n");
-
+    */
         /************** Convergence testing ***************/
         /*
         // unsigned longest = 0;
@@ -266,6 +266,7 @@ int main(int argc, char **argv)
         */
         /************** End: Convergence testing ***************/
 
+    /*
         // e-AWA*
         printf("Doing e-AWA*...\n");
         for(unsigned i = 0; i < experiments; i++) {
@@ -298,7 +299,7 @@ int main(int argc, char **argv)
         printf("Average stored: %lf\n", (double) total_stored / num_experiments);
         printf("Average expanded: %lf\n", (double) total_exp / num_experiments);
         printf("\n===================\n\n");
-
+    */
 
         // beta-AWA*
         printf("Doing beta-AWA*...\n");
@@ -318,9 +319,9 @@ int main(int argc, char **argv)
 
         } 
         printf("Average time to optaim solution: %lf\n", beta_awa_total_time / num_experiments);
-        total_found = 0;
-        total_exp = 0;
-        total_stored = 0;
+        double total_found = 0;
+        uint64_t total_exp = 0;
+        unsigned total_stored = 0;
         for (unsigned i = 0; i<experiments; i++){
 
             total_found += beta_awa_costs[i].size();

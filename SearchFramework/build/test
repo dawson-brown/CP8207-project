@@ -53,3 +53,26 @@ Average expanded: 587692.640000
 
 --------------- Weight 10.000000 ---------------
 Doing AWA*...
+Average time to optaim solution: 21.579815
+Average found: 30.800000
+Average stored: 5401559.630000
+Average expanded: 1901236.580000
+
+===================
+
+Doing e-AWA*...
+Average time to optaim solution: 7.305368
+Average found: 20.400000
+Average stored: 2027138.810000
+Average expanded: 709049.280000
+
+===================
+
+Doing beta-AWA*...
+Average time to optaim solution: 8.098504
+Average found: 21.260000
+Average stored: 2200575.940000
+Average expanded: 769546.950000
+
+===================
+
